@@ -14,10 +14,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static com.switchwon.forexordersystem.common.util.ForexCalculator.applyDisplayUnit;
+import static com.switchwon.forexordersystem.common.util.ForexCalculator.truncatedNow;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 /**
@@ -79,7 +80,7 @@ public class OrderService {
                            .toCurrency(to)            // 외화
                            .toAmount(forexAmount)     // 요청 외화량 그대로 (입금)
                            .tradeRate(displayRate)
-                           .createdAt(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS))
+                           .createdAt(truncatedNow())
                            .build();
 
         Order saved = orderRepository.save(order);
@@ -109,7 +110,7 @@ public class OrderService {
                            .toCurrency(to)            // KRW
                            .toAmount(floorKrw)        // 절사된 KRW (입금)
                            .tradeRate(displayRate)
-                           .createdAt(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS))
+                           .createdAt(truncatedNow())
                            .build();
 
         Order saved = orderRepository.save(order);
@@ -148,13 +149,5 @@ public class OrderService {
         }
     }
 
-    /**
-     * 표시 단위 환산
-     * JPY => ×100, 그 외는 그대로.
-     * 참고: 정수 unit 과의 곱셈은 BigDecimal scale 을 보존
-     */
-    private BigDecimal applyDisplayUnit(BigDecimal rate, Currency currency) {
-        return rate.multiply(BigDecimal.valueOf(currency.getUnit()));
-    }
 
 }

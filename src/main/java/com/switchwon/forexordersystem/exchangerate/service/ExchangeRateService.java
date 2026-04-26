@@ -12,10 +12,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static com.switchwon.forexordersystem.common.util.ForexCalculator.applyDisplayUnit;
+import static com.switchwon.forexordersystem.common.util.ForexCalculator.scale;
+import static com.switchwon.forexordersystem.common.util.ForexCalculator.truncatedNow;
+
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -56,7 +58,7 @@ public class ExchangeRateService {
             return;
         }
 
-        LocalDateTime now = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
+        LocalDateTime now = truncatedNow();
         List<ExchangeRateHistory> entities = new ArrayList<>();
         rates.forEach(
             (currency, baseRate) -> entities.add(toEntity(currency, baseRate, now))
@@ -68,8 +70,8 @@ public class ExchangeRateService {
 
     // 매앱/매매 기준율로부터 전신환 매입/매도 환율을 계산하여 엔티티
     private ExchangeRateHistory toEntity(Currency currency, BigDecimal tradeStanRate, LocalDateTime collectedAt) {
-        BigDecimal buy = scale(tradeStanRate.multiply(buySpread)); // ×1.05 및 scale()
-        BigDecimal sell = scale(tradeStanRate.multiply(sellSpread)); // ×0.95 및 scale()
+        BigDecimal buy = scale(tradeStanRate.multiply(buySpread)); // ×1.05
+        BigDecimal sell = scale(tradeStanRate.multiply(sellSpread)); // ×0.95
 
         return ExchangeRateHistory.builder()
                                   .currency(currency)
@@ -144,15 +146,5 @@ public class ExchangeRateService {
                                    .build();
     }
 
-    // 표시 단위 환산
-    // 현재는 JPY case만 존재, JPY인 경우 * 100
-    private BigDecimal applyDisplayUnit(BigDecimal rate, Currency currency) {
-        return rate.multiply(BigDecimal.valueOf(currency.getUnit()));
-    }
-
-    // **중요** 전신환 매입/매매율 소수점 2자리 반올림
-    private BigDecimal scale(BigDecimal value) {
-        return value.setScale(2, RoundingMode.HALF_UP);
-    }
 
 }

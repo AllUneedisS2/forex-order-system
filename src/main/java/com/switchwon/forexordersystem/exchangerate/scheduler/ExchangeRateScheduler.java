@@ -37,7 +37,7 @@ public class ExchangeRateScheduler {
 
     // 매 분 0초마다 환율 수집 Job 실행
     // cron 식은 yml(app.scheduler.cron)으로 외부화
-    @Scheduled(cron = "${app.scheduler.exchange-rate-cro:0 * * * * *}")
+    @Scheduled(cron = "${app.scheduler.exchange-rate-cron:0 * * * * *}")
     public void scheduleCollect() {
         if (!enabled) {
             log.debug("[Scheduler] 비활성 상태 - 정기 수집 skip");

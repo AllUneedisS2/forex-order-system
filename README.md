@@ -12,7 +12,7 @@
 | 분류 | 기술 |
 |------|------|
 | Language / Build | Java 17, Gradle 8.x |
-| Framework | Spring Boot 3.5 (MVC + WebClient + JPA + Batch) |
+| Framework | Spring Boot 3.5.14 (MVC + WebClient + JPA + Batch) |
 | DB | H2 (dev: in-memory / prod: file) |
 | HTTP Client | Spring WebClient (Reactor Netty) |
 | Test | JUnit 5, Mockito, WebTestClient, MockWebServer |
@@ -99,7 +99,7 @@ open build/reports/tests/test/index.html
 ```
 src/main/java/com/switchwon/forexordersystem/
 ├── ForexOrderSystemApplication.java
-├── common/        # Response, Exception, AOP, Currency enum
+├── common/        # Response, Exception, AOP, Currency enum, ForexCalculator
 ├── config/        # WebClientConfig
 ├── exchangerate/  # controller, service, repository, batch, dto, domain
 └── order/         # controller, service, repository, dto, domain
@@ -114,13 +114,4 @@ src/main/java/com/switchwon/forexordersystem/
 | `dev` | H2 In-memory | 콘솔 |
 | `prod` | H2 File | 콘솔 + 파일 (롤링) |
 
-주요 설정 (`application.yml`):
-
-```yaml
-app:
-  exchange-api:
-    base-url: https://open.er-api.com/v6
-    fallback-to-mock: true
-  scheduler:
-    cron: "0 * * * * *"   # 매분 0초
-```
+외부 환율 API: `https://open.er-api.com/v6`

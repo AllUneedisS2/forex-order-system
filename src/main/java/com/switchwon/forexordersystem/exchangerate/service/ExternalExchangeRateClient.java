@@ -1,5 +1,7 @@
 package com.switchwon.forexordersystem.exchangerate.service;
 
+import static com.switchwon.forexordersystem.common.util.ForexCalculator.scale;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Duration;
@@ -76,7 +78,7 @@ public class ExternalExchangeRateClient {
                     log.warn("외부 환율 API 실패: {}", e.getMessage());
                     if (fallbackToMock) {
                         Map<Currency, BigDecimal> mock = generateMockRates();
-                        log.warn("Mock 데이터로 fallback (마지막 성공값 기준 ±1% 변동): {}", mock);
+                        log.warn("마지막 성공값 반환 (성공 이력 없으면 고정 시드값 사용): {}", mock);
                         return Mono.just(mock);
                     }
                     return Mono.error(e);
@@ -120,9 +122,4 @@ public class ExternalExchangeRateClient {
         return new EnumMap<>(base != null ? base : BOOTSTRAP_SEED);
     }
 
-    // **중요** 매입/매매 기준율 소수점 2자리 반올림
-    private BigDecimal scale(BigDecimal value) {
-        return value.setScale(2, RoundingMode.HALF_UP);
-    }
-    
 }

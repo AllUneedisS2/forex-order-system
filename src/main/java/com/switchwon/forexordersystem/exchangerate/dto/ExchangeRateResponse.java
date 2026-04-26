@@ -1,13 +1,13 @@
 package com.switchwon.forexordersystem.exchangerate.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.switchwon.forexordersystem.common.enums.Currency;
-import com.switchwon.forexordersystem.exchangerate.domain.ExchangeRateHistory;
-import lombok.Builder;
-import lombok.Getter;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.switchwon.forexordersystem.common.enums.Currency;
+
+import lombok.Builder;
+import lombok.Getter;
 
 /**
  * 개별 통화 환율 DTO
