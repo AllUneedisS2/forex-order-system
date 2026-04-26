@@ -37,6 +37,7 @@ SPRING_PROFILES_ACTIVE=prod java -jar build/libs/forex-order-system.jar
 
 ## H2 접속
 
+```bash
 # dev
 Driver Class: org.h2.Driver
 JDBC URL: dbc:h2:mem:forexdb
@@ -46,6 +47,7 @@ User Name: sa
 Driver Class: org.h2.Driver
 JDBC URL: jdbc:h2:file:./data/forexdb
 User Name: sa
+```
 
 ---
 
