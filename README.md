@@ -1,4 +1,7 @@
-# forex-order-system
+<p align="center">
+  <strong style="font-size: 1.8em;">forex-order-system</strong>
+  <img src="docs/logo.png" width="40" align="right" />
+</p>
 
 실시간 환율 기반 외환 주문 시스템
 
