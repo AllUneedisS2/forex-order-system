@@ -1,5 +1,5 @@
 <p align="center">
-  <strong style="font-size: 1.8em;">forex-order-system</strong>
+  <strong style="font-size: 2.8em;">forex-order-system</strong>
   <img src="docs/logo.png" width="40" align="right" />
 </p>
 
