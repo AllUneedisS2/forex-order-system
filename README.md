@@ -27,7 +27,7 @@
 
 # 운영 빌드
 ./gradlew bootJar
-SPRING_PROFILES_ACTIVE=prod java -jar build/libs/forex-order-system-*.jar
+SPRING_PROFILES_ACTIVE=prod java -jar build/libs/forex-order-system.jar
 
 # 테스트
 ./gradlew test
