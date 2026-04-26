@@ -33,7 +33,19 @@ SPRING_PROFILES_ACTIVE=prod java -jar build/libs/forex-order-system.jar
 ./gradlew test
 ```
 
-부팅 후 약 5초 뒤 첫 환율 수집 완료.
+---
+
+## H2 접속
+
+# dev
+Driver Class: org.h2.Driver
+JDBC URL: dbc:h2:mem:forexdb
+User Name: sa
+
+# prod
+Driver Class: org.h2.Driver
+JDBC URL: jdbc:h2:file:./data/forexdb
+User Name: sa
 
 ---
 

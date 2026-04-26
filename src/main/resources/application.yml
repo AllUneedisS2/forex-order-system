@@ -3,6 +3,10 @@ spring:
     name: forex-order-system
   profiles:
     active: ${SPRING_PROFILES_ACTIVE:dev} # default:dev
+  h2:
+    console:
+      enabled: true
+      path: /h2-console # http://localhost:8080/h2-console
   jpa:
     open-in-view: false
     properties:
