@@ -3,7 +3,6 @@ package com.switchwon.forexordersystem.order.service;
 import com.switchwon.forexordersystem.common.enums.Currency;
 import com.switchwon.forexordersystem.common.exception.BusinessException;
 import com.switchwon.forexordersystem.common.response.ResponseCode;
-import com.switchwon.forexordersystem.exchangerate.domain.ExchangeRateHistory;
 import com.switchwon.forexordersystem.exchangerate.service.ExchangeRateService;
 import com.switchwon.forexordersystem.order.domain.Order;
 import com.switchwon.forexordersystem.order.domain.OrderType;
@@ -20,7 +19,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -59,7 +57,7 @@ class OrderServiceTest {
         void buy_usd_200() {
             // given
             mockUsdRate();
-            when(orderRepository.save(any(Order.class))).thenAnswer(inv -> inv.getArgument(0));
+            when(orderRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
             // when
             OrderResponse response = orderService.placeOrder(
@@ -82,9 +80,10 @@ class OrderServiceTest {
         @DisplayName("KRW → JPY 1000 매수 → tradeRate 가 100엔 단위로 저장")
         void buy_jpy_applies_100_unit_display_rate() {
             // given - JPY raw buyRate=9.72 (1엔 기준), display=972.00 (100엔)
-            ExchangeRateHistory rate = jpyRate("9.72", "8.80");
-            when(exchangeRateService.findLatestEntity(Currency.JPY)).thenReturn(rate);
-            when(orderRepository.save(any(Order.class))).thenAnswer(inv -> inv.getArgument(0));
+            when(exchangeRateService.getLatestRates(Currency.JPY))
+                    .thenReturn(new ExchangeRateService.RateSnapshot(
+                            new BigDecimal("9.72"), new BigDecimal("8.80")));
+            when(orderRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
             // when
             OrderResponse response = orderService.placeOrder(
@@ -101,15 +100,10 @@ class OrderServiceTest {
         @DisplayName("KRW 환산 금액의 소수점은 절사된다")
         void buy_floors_krw_amount() {
             // given - 의도적으로 소수점 3자리 rate 를 사용해 절사 동작 검증
-            ExchangeRateHistory rate = ExchangeRateHistory.builder()
-                    .currency(Currency.USD)
-                    .tradeStanRate(new BigDecimal("1000.00"))
-                    .buyRate(new BigDecimal("1234.567"))
-                    .sellRate(new BigDecimal("950.00"))
-                    .collectedAt(LocalDateTime.now())
-                    .build();
-            when(exchangeRateService.findLatestEntity(Currency.USD)).thenReturn(rate);
-            when(orderRepository.save(any(Order.class))).thenAnswer(inv -> inv.getArgument(0));
+            when(exchangeRateService.getLatestRates(Currency.USD))
+                    .thenReturn(new ExchangeRateService.RateSnapshot(
+                            new BigDecimal("1234.567"), new BigDecimal("950.00")));
+            when(orderRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
             // when - 1 USD 매수 시 1234.567 KRW → floor → 1234 KRW
             OrderResponse response = orderService.placeOrder(
@@ -133,7 +127,7 @@ class OrderServiceTest {
         void sell_usd_133() {
             // given
             mockUsdRate();
-            when(orderRepository.save(any(Order.class))).thenAnswer(inv -> inv.getArgument(0));
+            when(orderRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
             // when
             OrderResponse response = orderService.placeOrder(
@@ -188,7 +182,7 @@ class OrderServiceTest {
         @DisplayName("환율이 아직 수집되지 않으면 NOT_FOUND")
         void rate_not_collected_yet() {
             // given - ExchangeRateService 가 NOT_FOUND 던지는 상황
-            when(exchangeRateService.findLatestEntity(Currency.EUR))
+            when(exchangeRateService.getLatestRates(Currency.EUR))
                     .thenThrow(new BusinessException(
                             ResponseCode.NOT_FOUND, "해당 통화의 환율이 아직 수집되지 않았습니다: EUR"));
 
@@ -208,23 +202,8 @@ class OrderServiceTest {
     // ------------------------------------------------------------------
 
     private void mockUsdRate() {
-        ExchangeRateHistory rate = ExchangeRateHistory.builder()
-                                                      .currency(Currency.USD)
-                                                      .tradeStanRate(new BigDecimal("1477.65"))
-                                                      .buyRate(new BigDecimal("1551.53"))
-                                                      .sellRate(new BigDecimal("1403.77"))
-                                                      .collectedAt(LocalDateTime.now())
-                                                      .build();
-        when(exchangeRateService.findLatestEntity(Currency.USD)).thenReturn(rate);
-    }
-
-    private ExchangeRateHistory jpyRate(String buy, String sell) {
-        return ExchangeRateHistory.builder()
-                                  .currency(Currency.JPY)
-                                  .tradeStanRate(new BigDecimal("9.26"))
-                                  .buyRate(new BigDecimal(buy))
-                                  .sellRate(new BigDecimal(sell))
-                                  .collectedAt(LocalDateTime.now())
-                                  .build();
+        when(exchangeRateService.getLatestRates(Currency.USD))
+                .thenReturn(new ExchangeRateService.RateSnapshot(
+                        new BigDecimal("1551.53"), new BigDecimal("1403.77")));
     }
 }

@@ -12,6 +12,6 @@ import java.util.List;
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
-    // 모든 주문을 최신순으로 조회
+    // 모든 주문을 오름차순 조회 (요구사항에 따라)
     List<Order> findAllByOrderByCreatedAtAsc();
 }

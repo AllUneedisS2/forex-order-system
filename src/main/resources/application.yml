@@ -29,7 +29,6 @@ app:
   forex:
     buy-spread: 1.05 # 매입율 = 매매기준율 × 1.05
     sell-spread: 0.95 # 매도율 = 매매기준율 × 0.95
-    jpy-unit: 100 # JPY 단위 환산 (100엔)
 
 management:
   endpoints:

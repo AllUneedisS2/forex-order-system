@@ -3,6 +3,7 @@ package com.switchwon.forexordersystem.order.dto;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.switchwon.forexordersystem.common.enums.Currency;
 import com.switchwon.forexordersystem.order.domain.Order;
@@ -42,9 +43,10 @@ public class OrderResponse {
     private BigDecimal tradeRate;
 
     // 주문 시각
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime createdAt;
 
-    // 엔티티 → 응답 DTO 변환 (id 값 X)
+    // 엔티티 → 응답 DTO 변환 (id 값 O)
     public static OrderResponse fromWithId(Order order) {
         return OrderResponse.builder()
                             .id(order.getId())
@@ -57,7 +59,7 @@ public class OrderResponse {
                             .build();
     }
 
-    // 엔티티 → 응답 DTO 변환 (id 값 O)
+    // 엔티티 → 응답 DTO 변환 (id 값 X)
     public static OrderResponse fromWithoutId(Order order) {
         return OrderResponse.builder()
                             .fromAmount(order.getFromAmount())

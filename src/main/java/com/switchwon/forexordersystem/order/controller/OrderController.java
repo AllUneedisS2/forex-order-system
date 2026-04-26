@@ -31,7 +31,7 @@ public class OrderController {
         return CommonResponse.success(orderService.placeOrder(request));
     }
 
-    // 주문 목록 조회 (최신순)
+    // 주문 목록 조회
     // GET /order/list
     @GetMapping("/list")
     public CommonResponse<OrderListResponse> getOrderList() {

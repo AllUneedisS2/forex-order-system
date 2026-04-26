@@ -1,16 +1,5 @@
 package com.switchwon.forexordersystem.exchangerate.service;
 
-import com.switchwon.forexordersystem.common.enums.Currency;
-import com.switchwon.forexordersystem.exchangerate.dto.ExternalApiResponse;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
-import reactor.util.retry.Retry;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Duration;
@@ -18,11 +7,24 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+import org.springframework.web.reactive.function.client.WebClient;
+
+import com.switchwon.forexordersystem.common.enums.Currency;
+import com.switchwon.forexordersystem.exchangerate.dto.ExternalApiResponse;
+
+import lombok.extern.slf4j.Slf4j;
+import reactor.core.publisher.Mono;
+import reactor.util.retry.Retry;
+
 /**
  * 외부 환율 API 클라이언트
  *
  * 1. 호출 성공 시 환율을 메모리에 캐싱
- * 2. 실패 + fallback 옵션이 켜져 있으면 => 마지막 성공 값을 기준으로 ±1% 변동시켜 Mock 대체
+ * 2. 실패 + fallback 옵션이 켜져 있으면 => 마지막 성공 값을 기준으로 Mock 대체
+ * 3. 한 번도 성공한 적 없으면 고정 값으로 대체..
  */
 @Slf4j
 @Component

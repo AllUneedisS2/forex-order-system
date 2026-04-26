@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -55,7 +56,7 @@ public class ExchangeRateService {
             return;
         }
 
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
         List<ExchangeRateHistory> entities = new ArrayList<>();
         rates.forEach(
             (currency, baseRate) -> entities.add(toEntity(currency, baseRate, now))
@@ -104,8 +105,18 @@ public class ExchangeRateService {
         return result;
     }
 
+    // OrderService에 노출하는 환율 스냅샷 - 엔티티 대신 필요한 값만 전달
+    public record RateSnapshot(BigDecimal buyRate, BigDecimal sellRate) {}
+
+    // Order 도메인에서 호출 - 매입/매도율만 반환
     @Transactional(readOnly = true)
-    public ExchangeRateHistory findLatestEntity(Currency currency) {
+    public RateSnapshot getLatestRates(Currency currency) {
+        ExchangeRateHistory entity = findLatestEntity(currency);
+        return new RateSnapshot(entity.getBuyRate(), entity.getSellRate());
+    }
+
+    // 내부 조회 공통 - 데이터 없으면 NOT_FOUND
+    private ExchangeRateHistory findLatestEntity(Currency currency) {
         return repository.findFirstByCurrencyOrderByCollectedAtDesc(currency)
                          .orElseThrow(() -> new BusinessException(
                             ResponseCode.NOT_FOUND,

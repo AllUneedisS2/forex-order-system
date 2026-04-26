@@ -26,13 +26,4 @@ public class ExchangeRateResponse {
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private final LocalDateTime dateTime;
 
-    public static ExchangeRateResponse from(ExchangeRateHistory e) {
-        return ExchangeRateResponse.builder()
-                                   .currency(e.getCurrency())
-                                   .buyRate(e.getBuyRate())
-                                   .tradeStanRate(e.getTradeStanRate())
-                                   .sellRate(e.getSellRate())
-                                   .dateTime(e.getCollectedAt())
-                                   .build();
-    }
 }

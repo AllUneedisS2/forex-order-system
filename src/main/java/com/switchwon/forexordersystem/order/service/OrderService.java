@@ -3,7 +3,6 @@ package com.switchwon.forexordersystem.order.service;
 import com.switchwon.forexordersystem.common.enums.Currency;
 import com.switchwon.forexordersystem.common.exception.BusinessException;
 import com.switchwon.forexordersystem.common.response.ResponseCode;
-import com.switchwon.forexordersystem.exchangerate.domain.ExchangeRateHistory;
 import com.switchwon.forexordersystem.exchangerate.service.ExchangeRateService;
 import com.switchwon.forexordersystem.order.domain.Order;
 import com.switchwon.forexordersystem.order.domain.OrderType;
@@ -18,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 /**
@@ -51,19 +51,19 @@ public class OrderService {
         OrderType orderType = (from == Currency.KRW) ? OrderType.BUY : OrderType.SELL; // 매수/매도 판별
         Currency foreignCurrency = (from == Currency.KRW) ? to : from; // 외화 통화 식별
 
-        ExchangeRateHistory latestRate = exchangeRateService.findLatestEntity(foreignCurrency); // 환율 조회 (없으면 NOT_FOUND)
+        ExchangeRateService.RateSnapshot latestRate = exchangeRateService.getLatestRates(foreignCurrency); // 없으면 NOT_FOUND
 
         return (orderType == OrderType.BUY)
                 ? buyForeignCurrency(latestRate, forexAmount, from, to)
                 : sellForeignCurrency(latestRate, forexAmount, from, to);
     }
 
-    // 매수: KRW → 외화
-    private OrderResponse buyForeignCurrency(ExchangeRateHistory rate,
+    // 매수: KRW → 외화, buyRate 적용
+    private OrderResponse buyForeignCurrency(ExchangeRateService.RateSnapshot rate,
                                              BigDecimal forexAmount,
                                              Currency from,
                                              Currency to) {
-        BigDecimal rawBuyRate = rate.getBuyRate(); // 기준 매입율 (×1.05 적용된 값)
+        BigDecimal rawBuyRate = rate.buyRate(); // 기준 매입율 (×1.05 적용된 값)
 
         // KRW 환산 + 절사
         BigDecimal krwAmount = forexAmount.multiply(rawBuyRate);
@@ -79,7 +79,7 @@ public class OrderService {
                            .toCurrency(to)            // 외화
                            .toAmount(forexAmount)     // 요청 외화량 그대로 (입금)
                            .tradeRate(displayRate)
-                           .createdAt(LocalDateTime.now())
+                           .createdAt(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS))
                            .build();
 
         Order saved = orderRepository.save(order);
@@ -88,12 +88,12 @@ public class OrderService {
         return OrderResponse.fromWithoutId(saved);
     }
 
-    // 매도: 외화 -> KRW
-    private OrderResponse sellForeignCurrency(ExchangeRateHistory rate,
+    // 매도: 외화 → KRW, sellRate 적용
+    private OrderResponse sellForeignCurrency(ExchangeRateService.RateSnapshot rate,
                                               BigDecimal forexAmount,
                                               Currency from,
                                               Currency to) {
-        BigDecimal rawSellRate = rate.getSellRate(); // 기준 매도율 (×0.95 적용된 값)
+        BigDecimal rawSellRate = rate.sellRate(); // 기준 매도율 (×0.95 적용된 값)
 
         // KRW 환산 + 절사
         BigDecimal krwAmount = forexAmount.multiply(rawSellRate);
@@ -109,7 +109,7 @@ public class OrderService {
                            .toCurrency(to)            // KRW
                            .toAmount(floorKrw)        // 절사된 KRW (입금)
                            .tradeRate(displayRate)
-                           .createdAt(LocalDateTime.now())
+                           .createdAt(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS))
                            .build();
 
         Order saved = orderRepository.save(order);
