@@ -1,4 +1,4 @@
-package com.switchwon.forex_order_system;
+package com.switchwon.forexordersystem;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

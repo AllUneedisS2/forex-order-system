@@ -1,0 +1,37 @@
+spring:
+  application:
+    name: forex-order-system
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev} # default:dev
+  jpa:
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+  batch:
+    jdbc:
+      initialize-schema: always
+    job:
+      enabled: false # 스케줄러가 직접 트리거
+
+app:
+  scheduler:
+    enabled: true
+    exchange-rate-cron: "0 * * * * *" # 1분 마다
+  exchange-api:
+    base-url: "https://open.er-api.com/v6" # 환율 API url
+    timeout-ms: 3000
+    fallback-to-mock: true # API 실패시 mock 데이터 여부
+  forex:
+    buy-spread: 1.05 # 매입율 = 매매기준율 × 1.05
+    sell-spread: 0.95 # 매도율 = 매매기준율 × 0.95
+    jpy-unit: 100 # JPY 단위 환산 (100엔)
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info # 외부 노출
+  endpoint:
+    health:
+      show-details: when-authorized

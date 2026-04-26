@@ -1,0 +1,25 @@
+spring:
+  datasource:
+    url: jdbc:h2:file:./data/forexdb;MODE=MySQL;AUTO_SERVER=TRUE # 재기동 후 데이터 파일 유지
+    driver-class-name: org.h2.Driver
+    username: ${DB_USERNAME:sa} # 보안상 상용은 계정 정보는 환경변수로... (디폴트는 sa)
+    password: ${DB_PASSWORD:}
+  h2:
+    console:
+      enabled: false
+  jpa:
+    hibernate:
+      ddl-auto: update # 변경사항만 적용 테이블
+    show-sql: false
+
+logging:
+  level:
+    root: WARN
+    com.switchwon.forexordersystem: INFO
+  file:
+    name: logs/forex-order-system.log
+
+management:
+  endpoint:
+    health:
+      show-details: never # 보안상 비공개

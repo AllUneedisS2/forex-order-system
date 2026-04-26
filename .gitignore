@@ -1,11 +1,27 @@
-HELP.md
-.gradle
+# =============================================================================
+#  Gradle
+# =============================================================================
+.gradle/
 build/
-!gradle/wrapper/gradle-wrapper.jar
-!**/src/main/**/build/
-!**/src/test/**/build/
 
-### STS ###
+# Gradle Wrapper (필수)
+!gradlew
+!gradlew.bat
+!gradle/wrapper/gradle-wrapper.jar
+!gradle/wrapper/gradle-wrapper.properties
+
+# =============================================================================
+#  IDE
+# =============================================================================
+
+# IntelliJ
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+
+# Eclipse / STS
 .apt_generated
 .classpath
 .factorypath
@@ -14,24 +30,31 @@ build/
 .springBeans
 .sts4-cache
 bin/
-!**/src/main/**/bin/
-!**/src/test/**/bin/
 
-### IntelliJ IDEA ###
-.idea
-*.iws
-*.iml
-*.ipr
-out/
-!**/src/main/**/out/
-!**/src/test/**/out/
-
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-
-### VS Code ###
+# VS Code
 .vscode/
+
+# =============================================================================
+#  OS
+# =============================================================================
+.DS_Store
+Thumbs.db
+
+# =============================================================================
+#  Logs & Data
+# =============================================================================
+logs/
+*.log
+*.log.*
+
+# (선택) 로컬 DB
+data/
+
+# =============================================================================
+#  Env / Secrets
+# =============================================================================
+.env
+.env.local
+application-local.yml
+application-local.yaml
+application-secret.yml

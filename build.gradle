@@ -18,16 +18,48 @@ repositories {
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-batch'
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	// Spring MVC : REST 컨트롤러
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	// Spring Reactive Web : WebFlux 기반 REST 컨트롤러 + WebClient(외부 환율 API 호출)
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+	// JPA : 환율 이력 / 주문 내역 영속화
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	// Spring Batch : 1분 단위 환율 수집 잡(Job) 모듈화 + 실행 이력 자동 저장
+	implementation 'org.springframework.boot:spring-boot-starter-batch'
+	// Validation : 요청 DTO 검증
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	// AOP : 로깅
+	implementation 'org.springframework.boot:spring-boot-starter-aop'
+	// Actuator : 헬스체크 노출
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+
+	// H2
 	runtimeOnly 'com.h2database:h2'
+
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	// WebFlux 테스트용
+	testImplementation 'io.projectreactor:reactor-test'
+	// Spring Batch 테스트용
 	testImplementation 'org.springframework.batch:spring-batch-test'
+	// API 요청 테스트용
+	testImplementation 'com.squareup.okhttp3:mockwebserver:4.12.0'
+	testCompileOnly 'org.projectlombok:lombok'
+	testAnnotationProcessor 'org.projectlombok:lombok'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
+	// 빌드 로깅
+	testLogging {
+		events "passed", "skipped", "failed"
+		exceptionFormat "full"
+	}
+}
+
+// jar 파일명 고정
+bootJar {
+	archiveFileName = 'forex-order-system.jar'
 }
