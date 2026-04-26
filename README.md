@@ -18,7 +18,6 @@
 | DB | H2 (dev: in-memory / prod: file) |
 | HTTP Client | Spring WebClient (Reactor Netty) |
 | Test | JUnit 5, Mockito, WebTestClient, MockWebServer |
-| CI | GitHub Actions |
 
 ---
 
@@ -62,8 +61,6 @@ User Name: sa
 | GET | `/exchange-rate/latest/{currency}` | 단건 조회 (USD/JPY/CNY/EUR) |
 | POST | `/order` | 외환 매수/매도 주문 |
 | GET | `/order/list` | 주문 내역 조회 |
-
-응답 포맷은 모두 `{ "code": "OK", "message": "SUCCESS", "returnObject": {...} }` 통일.
 
 ### 주문 요청 예시
 
