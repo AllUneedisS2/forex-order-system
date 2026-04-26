@@ -1,7 +1,5 @@
-<p align="center">
-  <strong style="font-size: 2.8em;">forex-order-system</strong>
-  <img src="docs/logo.png" width="40" align="right" />
-</p>
+<img src="docs/logo.png" width="40" align="right" />
+<h1 align="center">forex-order-system</h1>
 
 실시간 환율 기반 외환 주문 시스템
 
