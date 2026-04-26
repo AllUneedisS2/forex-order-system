@@ -15,7 +15,6 @@
 | DB | H2 (dev: in-memory / prod: file) |
 | HTTP Client | Spring WebClient (Reactor Netty) |
 | Test | JUnit 5, Mockito, WebTestClient, MockWebServer |
-| CI | GitHub Actions |
 
 ---
 
