@@ -10,7 +10,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum ResponseCode {
 
-    OK("OK", "SUCCESS"),
+    OK("OK", "정상적으로 처리되었습니다."),
     BAD_REQUEST("BAD_REQUEST", "잘못된 요청입니다."),
     NOT_FOUND("NOT_FOUND", "데이터를 찾을 수 없습니다."),
     EXTERNAL_API_ERROR("EXTERNAL_API_ERROR", "외부 환율 API 호출에 실패했습니다."),

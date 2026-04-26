@@ -9,7 +9,7 @@ import lombok.Getter;
  * 컨트롤러 공통 응답 
  * {
  *   "code": "OK",
- *   "message": "SUCCESS",
+ *   "message": "정상적으로 처리되었습니다.",
  *   "returnObject": {..}
  * }
  */

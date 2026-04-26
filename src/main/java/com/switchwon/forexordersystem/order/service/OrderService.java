@@ -85,7 +85,7 @@ public class OrderService {
         Order saved = orderRepository.save(order);
         log.info("[Order] BUY 처리 완료 - id={}, {} {} → {} {}",
                 saved.getId(), floorKrw, from, forexAmount, to);
-        return OrderResponse.from(saved);
+        return OrderResponse.fromWithoutId(saved);
     }
 
     // 매도: 외화 -> KRW
@@ -115,7 +115,7 @@ public class OrderService {
         Order saved = orderRepository.save(order);
         log.info("[Order] SELL 처리 완료 - id={}, {} {} → {} {}",
                 saved.getId(), forexAmount, from, floorKrw, to);
-        return OrderResponse.from(saved);
+        return OrderResponse.fromWithoutId(saved);
     }
 
     // ------------------------------------------------------------------
@@ -124,9 +124,9 @@ public class OrderService {
 
     @Transactional(readOnly = true)
     public List<OrderResponse> getOrderList() {
-        return orderRepository.findAllByOrderByCreatedAtDesc()
+        return orderRepository.findAllByOrderByCreatedAtAsc()
                               .stream()
-                              .map(OrderResponse::from)
+                              .map(OrderResponse::fromWithId)
                               .toList();
     }
 

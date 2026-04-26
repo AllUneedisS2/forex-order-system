@@ -1,15 +1,17 @@
 package com.switchwon.forexordersystem.order.dto;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.switchwon.forexordersystem.common.enums.Currency;
 import com.switchwon.forexordersystem.order.domain.Order;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 /**
  * 외환 주문 응답
@@ -18,6 +20,7 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
+@JsonInclude(JsonInclude.Include.NON_NULL) // id null 무시
 public class OrderResponse {
 
     // 주문 ID
@@ -41,8 +44,8 @@ public class OrderResponse {
     // 주문 시각
     private LocalDateTime createdAt;
 
-    // 엔티티 → 응답 DTO 변환
-    public static OrderResponse from(Order order) {
+    // 엔티티 → 응답 DTO 변환 (id 값 X)
+    public static OrderResponse fromWithId(Order order) {
         return OrderResponse.builder()
                             .id(order.getId())
                             .fromAmount(order.getFromAmount())
@@ -53,4 +56,17 @@ public class OrderResponse {
                             .createdAt(order.getCreatedAt())
                             .build();
     }
+
+    // 엔티티 → 응답 DTO 변환 (id 값 O)
+    public static OrderResponse fromWithoutId(Order order) {
+        return OrderResponse.builder()
+                            .fromAmount(order.getFromAmount())
+                            .fromCurrency(order.getFromCurrency())
+                            .toAmount(order.getToAmount())
+                            .toCurrency(order.getToCurrency())
+                            .tradeRate(order.getTradeRate())
+                            .createdAt(order.getCreatedAt())
+                            .build();
+    }
+
 }
